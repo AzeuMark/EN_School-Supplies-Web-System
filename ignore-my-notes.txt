@@ -1,0 +1,1 @@
+$folderName = Split-Path -Leaf $PWD; Copy-Item -Path ".\*" -Destination "C:\xampp\htdocs\projects\$folderName" -Recurse -Force
