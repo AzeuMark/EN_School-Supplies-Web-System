@@ -42,7 +42,7 @@ include __DIR__ . '/../includes/layout_header.php';
   </div>
 
   <!-- Row 2: Charts -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+  <div class="analytics-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
     <!-- Orders Over Time -->
     <div class="card">
       <div class="card-header">Orders Over Time</div>
@@ -55,7 +55,7 @@ include __DIR__ . '/../includes/layout_header.php';
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+  <div class="analytics-grid-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
     <!-- Status Breakdown -->
     <div class="card">
       <div class="card-header">Orders by Status</div>
@@ -196,8 +196,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <style>
   @media (max-width: 768px) {
-    div[style*="grid-template-columns:1fr 1fr;"] { grid-template-columns: 1fr !important; }
-    div[style*="grid-template-columns:1fr 1fr 1fr;"] { grid-template-columns: 1fr !important; }
+    .analytics-grid-2,
+    .analytics-grid-3 { grid-template-columns: 1fr !important; }
+
+    .toolbar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.6rem;
+    }
+    .toolbar .status-tabs { flex-wrap: wrap; }
+    .toolbar .d-flex.gap-2.align-center {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .toolbar .d-flex.gap-2.align-center .form-input {
+      flex: 1;
+      min-width: 120px;
+    }
   }
 </style>
 

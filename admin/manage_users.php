@@ -134,8 +134,9 @@ include __DIR__ . '/../includes/layout_header.php';
     <div class="modal-body">
       <input type="hidden" id="flag-user-id">
       <div class="form-group">
-        <label class="form-label">Reason for flagging</label>
-        <textarea class="form-textarea" id="flag-reason" rows="3" placeholder="Enter reason..."></textarea>
+        <label class="form-label">Reason for flagging <span class="text-muted" style="font-weight:400">(max 100 chars)</span></label>
+        <textarea class="form-textarea" id="flag-reason" rows="3" placeholder="Enter reason..." maxlength="100"></textarea>
+        <div style="text-align:right;font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem"><span id="flag-reason-count">0</span>/100</div>
       </div>
     </div>
     <div class="modal-footer">
@@ -184,10 +185,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Flag User
+  document.getElementById('flag-reason').addEventListener('input', function() {
+    document.getElementById('flag-reason-count').textContent = this.value.length;
+  });
+
   document.querySelectorAll('.flag-user-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.getElementById('flag-user-id').value = btn.dataset.id;
       document.getElementById('flag-reason').value = '';
+      document.getElementById('flag-reason-count').textContent = '0';
       openModal('flag-user-modal');
     });
   });
@@ -206,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Delete User
   document.querySelectorAll('.delete-user-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-      if (!confirm('Delete this user permanently?')) return;
+      if (!await Dialog.danger('This will permanently delete the user and all associated data.', 'Delete User', 'Delete')) return;
       try {
         const data = await apiFetch('api/users/delete_user.php', {
           body: JSON.stringify({ user_id: btn.dataset.id, csrf_token: getCSRFToken() })

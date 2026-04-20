@@ -168,24 +168,116 @@ function closeModal(id) {
   }
 }
 
-// Close modal when clicking overlay background
+// Close modal when clicking overlay background (skip dialog overlays)
 document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('modal-overlay') && e.target.classList.contains('active')) {
+  if (e.target.classList.contains('modal-overlay') &&
+      e.target.classList.contains('active') &&
+      !e.target.hasAttribute('data-dialog')) {
     e.target.classList.remove('active');
     document.body.style.overflow = '';
   }
 });
 
-// Close modal with Escape key
+// Close modal with Escape key (skip dialog overlays — Dialog manages its own ESC)
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    const activeModal = document.querySelector('.modal-overlay.active');
+    const activeModal = document.querySelector('.modal-overlay.active:not([data-dialog])');
     if (activeModal) {
       activeModal.classList.remove('active');
       document.body.style.overflow = '';
     }
   }
 });
+
+
+/* ── Dialog System (themed alert / confirm / danger / warning) ── */
+const Dialog = (() => {
+  let overlayEl  = null;
+  let resolveRef = null;
+
+  function getOverlay() {
+    if (!overlayEl) {
+      overlayEl = document.createElement('div');
+      overlayEl.className = 'modal-overlay';
+      overlayEl.setAttribute('data-dialog', 'true');
+      document.body.appendChild(overlayEl);
+    }
+    return overlayEl;
+  }
+
+  const TYPES = {
+    info:    { icon: '&#8505;',   bg: 'var(--toast-info-bg)',    color: 'var(--info)'    },
+    success: { icon: '&#10004;',  bg: 'var(--toast-success-bg)', color: 'var(--success)' },
+    warning: { icon: '&#9888;',   bg: 'var(--toast-warning-bg)', color: 'var(--warning)' },
+    danger:  { icon: '&#128465;', bg: 'var(--toast-error-bg)',   color: 'var(--danger)'  },
+    confirm: { icon: '&#10067;',  bg: 'var(--toast-warning-bg)', color: 'var(--warning)' },
+  };
+
+  function show({ title, message, type = 'info', confirmText = 'OK', cancelText = null, confirmClass = 'btn-primary' }) {
+    return new Promise((resolve) => {
+      if (resolveRef) { resolveRef(false); }
+      resolveRef = resolve;
+
+      const o   = getOverlay();
+      const cfg = TYPES[type] || TYPES.info;
+
+      o.innerHTML = `
+        <div class="modal" style="max-width:400px">
+          <div class="modal-body" style="text-align:center;padding:2rem 1.5rem 1rem">
+            <div style="width:60px;height:60px;border-radius:50%;background:${cfg.bg};display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 1.1rem;color:${cfg.color}">${cfg.icon}</div>
+            ${title ? `<h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;color:var(--text-primary)">${escapeHtml(title)}</h3>` : ''}
+            <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.6;margin:0;word-break:break-word">${escapeHtml(message)}</p>
+          </div>
+          <div class="modal-footer" style="justify-content:center;gap:0.6rem">
+            ${cancelText ? `<button class="btn btn-outline dlg-cancel">${escapeHtml(cancelText)}</button>` : ''}
+            <button class="btn ${escapeHtml(confirmClass)} dlg-confirm">${escapeHtml(confirmText)}</button>
+          </div>
+        </div>
+      `;
+
+      o.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      function close(result) {
+        o.classList.remove('active');
+        document.body.style.overflow = '';
+        resolveRef = null;
+        resolve(result);
+      }
+
+      o.querySelector('.dlg-confirm').addEventListener('click', () => close(true));
+      const cancelBtn = o.querySelector('.dlg-cancel');
+      if (cancelBtn) cancelBtn.addEventListener('click', () => close(false));
+
+      const escFn = (e) => {
+        if (e.key === 'Escape' && o.classList.contains('active')) {
+          document.removeEventListener('keydown', escFn);
+          close(false);
+        }
+      };
+      document.addEventListener('keydown', escFn);
+      setTimeout(() => o.querySelector('.dlg-confirm')?.focus(), 50);
+    });
+  }
+
+  function alert(message, title = 'Notice') {
+    return show({ title, message, type: 'info', confirmText: 'OK', confirmClass: 'btn-primary' });
+  }
+
+  function confirm(message, title = 'Confirm', confirmText = 'Confirm', confirmClass = 'btn-primary') {
+    return show({ title, message, type: 'confirm', confirmText, cancelText: 'Cancel', confirmClass });
+  }
+
+  function danger(message, title = 'Are you sure?', confirmText = 'Delete') {
+    return show({ title, message, type: 'danger', confirmText, cancelText: 'Cancel', confirmClass: 'btn-danger' });
+  }
+
+  function warning(message, title = 'Warning', confirmText = 'Continue') {
+    return show({ title, message, type: 'warning', confirmText, cancelText: 'Cancel', confirmClass: 'btn-warning' });
+  }
+
+  return { alert, confirm, danger, warning };
+})();
 
 
 /* ── Flash Message Display ── */

@@ -53,6 +53,7 @@ include __DIR__ . '/../includes/layout_header.php';
 <script>
 document.querySelectorAll('.approve-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
+    if (!await Dialog.confirm('Approve this account? The user will be able to log in immediately.', 'Approve Account', 'Approve')) return;
     if (!preventDoubleClick(btn)) return;
     try {
       const data = await apiFetch('api/users/approve_user.php', {
@@ -65,7 +66,7 @@ document.querySelectorAll('.approve-btn').forEach(btn => {
 
 document.querySelectorAll('.delete-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
-    if (!confirm('Delete this pending account?')) return;
+    if (!await Dialog.danger('Delete this pending account? This action cannot be undone.', 'Delete Account', 'Delete')) return;
     try {
       const data = await apiFetch('api/users/delete_user.php', {
         body: JSON.stringify({ user_id: btn.dataset.id, csrf_token: getCSRFToken() })

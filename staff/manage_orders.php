@@ -113,7 +113,13 @@ include __DIR__ . '/../includes/layout_header.php';
 <script>
 document.querySelectorAll('.order-action').forEach(btn => {
   btn.addEventListener('click', async () => {
-    if (!confirm('Are you sure?')) return;
+    const msgs = { ready: 'Mark this order as Ready for pick-up?', claimed: 'Mark this order as Claimed?', cancelled: 'Cancel this order? This cannot be undone.' };
+    const titles = { ready: 'Mark as Ready', claimed: 'Mark as Claimed', cancelled: 'Cancel Order' };
+    const s = btn.dataset.status;
+    const confirmed = s === 'cancelled'
+      ? await Dialog.danger(msgs[s] || 'Are you sure?', titles[s] || 'Confirm', 'Cancel Order')
+      : await Dialog.confirm(msgs[s] || 'Are you sure?', titles[s] || 'Confirm', 'Confirm');
+    if (!confirmed) return;
     if (!preventDoubleClick(btn)) return;
     try {
       const data = await apiFetch('api/orders/update_status.php', { body: JSON.stringify({ order_id: btn.dataset.id, status: btn.dataset.status, csrf_token: getCSRFToken() }) });

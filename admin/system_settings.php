@@ -51,11 +51,11 @@ include __DIR__ . '/../includes/layout_header.php';
     <div class="card-body">
       <form id="settings-form">
         <div class="form-group"><label class="form-label">Store Name</label><input class="form-input" name="store_name" value="<?= htmlspecialchars($s['store_name']) ?>"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="settings-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
           <div class="form-group"><label class="form-label">Store Phone</label><input class="form-input" name="store_phone" value="<?= htmlspecialchars($s['store_phone']) ?>"></div>
           <div class="form-group"><label class="form-label">Store Email</label><input class="form-input" type="email" name="store_email" value="<?= htmlspecialchars($s['store_email']) ?>"></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="settings-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
           <div class="form-group">
             <label class="form-label">System Timezone</label>
             <select class="form-select" name="timezone">
@@ -134,6 +134,16 @@ include __DIR__ . '/../includes/layout_header.php';
   </div>
 
 </div>
+
+<style>
+  @media (max-width: 600px) {
+    .settings-grid-2 { grid-template-columns: 1fr !important; }
+    div[style*="max-width:800px"] { padding: 0; }
+    .card-body .d-flex.align-center.gap-3 { flex-wrap: wrap; }
+    #cat-input, #name-input { max-width: 100% !important; flex: 1; }
+    .d-flex.gap-2:has(#cat-input), .d-flex.gap-2:has(#name-input) { flex-wrap: wrap; }
+  }
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {

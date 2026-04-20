@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+  <!-- Blue stripe (top) -->
+  <rect width="900" height="300" fill="#0038A8"/>
+  <!-- Red stripe (bottom) -->
+  <rect y="300" width="900" height="300" fill="#CE1126"/>
+  <!-- White equilateral triangle -->
+  <polygon points="0,0 450,300 0,600" fill="#FFFFFF"/>
+  <!-- Sun rays -->
+  <g stroke="#FCD116" stroke-width="22" stroke-linecap="round" transform="translate(180,300)">
+    <line y1="-100" y2="-145"/>
+    <line y1="100"  y2="145"/>
+    <line x1="-100" x2="-145"/>
+    <line x1="100"  x2="145"/>
+    <line x1="-71"  y1="-71"  x2="-103" y2="-103"/>
+    <line x1="71"   y1="-71"  x2="103"  y2="-103"/>
+    <line x1="-71"  y1="71"   x2="-103" y2="103"/>
+    <line x1="71"   y1="71"   x2="103"  y2="103"/>
+  </g>
+  <!-- Sun circle -->
+  <circle cx="180" cy="300" r="72" fill="#FCD116"/>
+  <!-- 3 stars (top, bottom-left, bottom-right of triangle) -->
+  <!-- Top star -->
+  <polygon points="180,55 191,88 226,88 199,108 209,142 180,122 151,142 161,108 134,88 169,88" fill="#FCD116"/>
+  <!-- Bottom-left star -->
+  <polygon points="57,510 68,543 103,543 76,563 86,597 57,577 28,597 38,563 11,543 46,543" fill="#FCD116"/>
+  <!-- Bottom-right star -->
+  <polygon points="303,510 314,543 349,543 322,563 332,597 303,577 274,597 284,563 257,543 292,543" fill="#FCD116"/>
+</svg>

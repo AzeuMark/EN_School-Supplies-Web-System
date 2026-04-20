@@ -58,6 +58,61 @@ if ($orderIds) {
 include __DIR__ . '/../includes/layout_header.php';
 ?>
 
+<style>
+  @media (max-width: 700px) {
+    .status-tabs { gap: 0.3rem; }
+    .status-tab  { font-size: 0.78rem; padding: 0.35rem 0.7rem; }
+
+    .table-wrapper {
+      border: none;
+      background: transparent;
+      overflow: visible;
+    }
+    .data-table thead { display: none; }
+    .data-table tbody { display: flex; flex-direction: column; gap: 0.85rem; }
+    .data-table tr {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .data-table tr:hover td { background: transparent; }
+    .data-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      border-radius: 0;
+    }
+    .data-table td:last-child { border-bottom: none; padding-bottom: 0; }
+    .data-table td:first-child { padding-top: 0; }
+    .data-table td::before {
+      content: attr(data-label);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      white-space: nowrap;
+      min-width: 80px;
+      padding-top: 0.1rem;
+      flex-shrink: 0;
+    }
+    .data-table td .actions { flex-wrap: wrap; gap: 0.4rem; }
+    .data-table td[data-label="Actions"] { align-items: center; }
+    .data-table td[colspan] {
+      justify-content: center;
+      border-bottom: none;
+    }
+    .data-table td[colspan]::before { display: none; }
+  }
+</style>
+
 <div class="page-header">
   <h1>Manage Orders</h1>
   <p class="subtitle"><?= $total ?> total orders</p>
@@ -85,21 +140,25 @@ include __DIR__ . '/../includes/layout_header.php';
       <?php else: ?>
         <?php foreach ($orders as $o): ?>
           <tr>
-            <td><strong><?= htmlspecialchars($o['order_code']) ?></strong></td>
-            <td>
-              <?= htmlspecialchars($o['user_name'] ?? $o['guest_name'] ?? 'Guest') ?>
-              <br><span class="text-muted" style="font-size:0.75rem"><?= $o['user_id'] ? ucfirst($o['user_role'] ?? '') : 'Guest' ?></span>
+            <td data-label="Order ID"><strong><?= htmlspecialchars($o['order_code']) ?></strong></td>
+            <td data-label="Ordered By">
+              <span>
+                <?= htmlspecialchars($o['user_name'] ?? $o['guest_name'] ?? 'Guest') ?>
+                <br><span class="text-muted" style="font-size:0.75rem"><?= $o['user_id'] ? ucfirst($o['user_role'] ?? '') : 'Guest' ?></span>
+              </span>
             </td>
-            <td style="white-space:nowrap"><?= date('M d, Y h:i A', strtotime($o['created_at'])) ?></td>
-            <td>
-              <?php $items = $orderItemsMap[$o['id']] ?? []; ?>
-              <?php foreach ($items as $oi): ?>
-                <div style="font-size:0.82rem"><?= htmlspecialchars($oi['item_name_snapshot']) ?> × <?= $oi['quantity'] ?></div>
-              <?php endforeach; ?>
+            <td data-label="Date" style="white-space:nowrap"><?= date('M d, Y h:i A', strtotime($o['created_at'])) ?></td>
+            <td data-label="Items">
+              <span>
+                <?php $items = $orderItemsMap[$o['id']] ?? []; ?>
+                <?php foreach ($items as $oi): ?>
+                  <div style="font-size:0.82rem"><?= htmlspecialchars($oi['item_name_snapshot']) ?> × <?= $oi['quantity'] ?></div>
+                <?php endforeach; ?>
+              </span>
             </td>
-            <td><strong><?= format_price($o['total_price']) ?></strong></td>
-            <td><span class="badge badge-<?= $o['status'] ?>"><?= ucfirst($o['status']) ?></span></td>
-            <td>
+            <td data-label="Total"><strong><?= format_price($o['total_price']) ?></strong></td>
+            <td data-label="Status"><span class="badge badge-<?= $o['status'] ?>"><?= ucfirst($o['status']) ?></span></td>
+            <td data-label="Actions">
               <div class="actions">
                 <?php if ($o['status'] === 'pending'): ?>
                   <button class="btn btn-sm btn-primary order-action" data-id="<?= $o['id'] ?>" data-status="ready" title="Mark Ready">&#10004; Ready</button>
@@ -131,7 +190,13 @@ include __DIR__ . '/../includes/layout_header.php';
 <script>
 document.querySelectorAll('.order-action').forEach(btn => {
   btn.addEventListener('click', async () => {
-    if (!confirm('Are you sure?')) return;
+    const msgs = { ready: 'Mark this order as Ready for pick-up?', claimed: 'Mark this order as Claimed?', cancelled: 'Cancel this order? This cannot be undone.' };
+    const titles = { ready: 'Mark as Ready', claimed: 'Mark as Claimed', cancelled: 'Cancel Order' };
+    const s = btn.dataset.status;
+    const confirmed = s === 'cancelled'
+      ? await Dialog.danger(msgs[s] || 'Are you sure?', titles[s] || 'Confirm', 'Cancel Order')
+      : await Dialog.confirm(msgs[s] || 'Are you sure?', titles[s] || 'Confirm', 'Confirm');
+    if (!confirmed) return;
     if (!preventDoubleClick(btn)) return;
     try {
       const data = await apiFetch('api/orders/update_status.php', {

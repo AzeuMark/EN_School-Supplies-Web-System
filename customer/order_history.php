@@ -116,7 +116,7 @@ include __DIR__ . '/../includes/layout_header.php';
 <script>
 document.querySelectorAll('.cancel-order-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
-    if (!confirm('Cancel this order?')) return;
+    if (!await Dialog.warning('Cancel this order? This action cannot be undone.', 'Cancel Order', 'Cancel Order')) return;
     if (!preventDoubleClick(btn)) return;
     try {
       const data = await apiFetch('api/orders/cancel.php', {

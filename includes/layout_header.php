@@ -55,21 +55,24 @@ if (strpos($scriptPath, '/admin/') !== false ||
       <img src="<?= $basePath . $logoPath ?>" alt="Logo" onerror="this.style.display='none'">
       <span class="brand-name"><?= htmlspecialchars($storeName) ?></span>
     </a>
+    <div class="navbar-country">
+      <img src="<?= $basePath ?>assets/images/ph-flag.svg" alt="PH" class="navbar-country-flag">
+      <span class="navbar-country-name">Philippines</span>
+    </div>
   </div>
 
   <div class="navbar-center">
     <div class="navbar-datetime">
-      <span class="ph-flag">&#127477;&#127469;</span>
       <span id="navbar-datetime"></span>
     </div>
-    <span class="system-status <?= $sysStatus ?>">
-      <span class="status-dot"></span>
-      <?= ucfirst($sysStatus) ?>
-    </span>
   </div>
 
   <div class="navbar-right">
-    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">&#9790;</button>
+    <span class="system-status <?= $sysStatus ?>">
+      <span class="status-dot"></span>
+      <span class="status-label"><?= ucfirst($sysStatus) ?></span>
+    </span>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">&#127769;</button>
 
     <div class="profile-section">
       <div class="profile-trigger" id="profile-trigger">

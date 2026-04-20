@@ -21,6 +21,55 @@ try {
 include __DIR__ . '/../includes/layout_header.php';
 ?>
 
+<style>
+  @media (max-width: 700px) {
+    .toolbar { gap: 0.6rem; }
+    .toolbar > .d-flex { width: 100%; }
+    .toolbar .search-box { max-width: 100%; flex: 1 1 100%; }
+    .toolbar .status-tabs { flex-wrap: wrap; }
+
+    .table-wrapper { border: none; background: transparent; overflow: visible; }
+    .data-table thead { display: none; }
+    .data-table tbody { display: flex; flex-direction: column; gap: 0.85rem; }
+    .data-table tr {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .data-table tr:hover td { background: transparent; }
+    .data-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      border-radius: 0;
+    }
+    .data-table td:last-child { border-bottom: none; padding-bottom: 0; }
+    .data-table td:first-child { padding-top: 0; }
+    .data-table td::before {
+      content: attr(data-label);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      white-space: nowrap;
+      min-width: 72px;
+      flex-shrink: 0;
+    }
+    .data-table td[data-label="Actions"] { align-items: center; }
+    .data-table td[data-label="Image"] img { width: 36px; height: 36px; }
+    .data-table td[colspan]::before { display: none; }
+    .data-table td[colspan] { justify-content: center; border-bottom: none; }
+  }
+</style>
+
 <div class="page-header">
   <h1>Inventory</h1>
   <p class="subtitle">Manage your store items</p>
@@ -178,15 +227,15 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = items.map(i => {
       const statusClass = i.item_status === 'No Stock' ? 'no-stock' : i.item_status === 'Low Stock' ? 'low-stock' : 'on-stock';
       return `<tr>
-        <td>${i.item_image ? `<img src="${getBasePath() + i.item_image}" style="width:40px;height:40px;object-fit:cover;border-radius:6px">` : '<span style="font-size:1.5rem">&#128218;</span>'}</td>
-        <td>${i.id}</td>
-        <td><strong>${escapeHtml(i.item_name)}</strong></td>
-        <td>${escapeHtml(i.category_name || '—')}</td>
-        <td>${formatPrice(i.price)}</td>
-        <td>${i.stock_count}</td>
-        <td>${i.max_order_qty}</td>
-        <td><span class="badge badge-${statusClass}">${i.item_status}</span></td>
-        <td><div class="actions">
+        <td data-label="Image">${i.item_image ? `<img src="${getBasePath() + i.item_image}" style="width:40px;height:40px;object-fit:cover;border-radius:6px">` : '<span style="font-size:1.5rem">&#128218;</span>'}</td>
+        <td data-label="ID">${i.id}</td>
+        <td data-label="Name"><strong>${escapeHtml(i.item_name)}</strong></td>
+        <td data-label="Category">${escapeHtml(i.category_name || '—')}</td>
+        <td data-label="Price">${formatPrice(i.price)}</td>
+        <td data-label="Stock">${i.stock_count}</td>
+        <td data-label="Max Qty">${i.max_order_qty}</td>
+        <td data-label="Status"><span class="badge badge-${statusClass}">${i.item_status}</span></td>
+        <td data-label="Actions"><div class="actions">
           <button class="btn btn-icon btn-sm btn-ghost edit-inv" data-item='${JSON.stringify(i).replace(/'/g,"&#39;")}' title="Edit">&#9998;</button>
           <button class="btn btn-icon btn-sm btn-ghost stock-inv" data-id="${i.id}" data-name="${escapeHtml(i.item_name)}" title="Add Stock">&#10133;</button>
           <button class="btn btn-icon btn-sm btn-ghost text-danger del-inv" data-id="${i.id}" title="Delete">&#128465;</button>
@@ -219,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.querySelectorAll('.del-inv').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if (!confirm('Delete this item?')) return;
+        if (!await Dialog.danger('Delete this inventory item? This cannot be undone.', 'Delete Item', 'Delete')) return;
         try {
           const data = await apiFetch('api/inventory/delete_item.php', { body: JSON.stringify({ item_id: btn.dataset.id, csrf_token: getCSRFToken() }) });
           if (data.success) { Toast.success(data.message); loadItems(); }

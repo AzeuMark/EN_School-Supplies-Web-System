@@ -41,7 +41,7 @@ include __DIR__ . '/../includes/layout_header.php';
               $reason = $f['flag_reason'] ?? 'No reason provided';
               if (strlen($reason) > 60): ?>
                 <span><?= htmlspecialchars(substr($reason, 0, 60)) ?>...</span>
-                <button class="btn btn-ghost btn-sm" onclick="alert('<?= htmlspecialchars(addslashes($reason)) ?>')">View</button>
+                <button class="btn btn-ghost btn-sm" onclick="Dialog.alert(`<?= htmlspecialchars(addslashes($reason)) ?>`, 'Flag Reason')">View</button>
               <?php else: ?>
                 <?= htmlspecialchars($reason) ?>
               <?php endif; ?>
@@ -63,7 +63,7 @@ include __DIR__ . '/../includes/layout_header.php';
 <script>
 document.querySelectorAll('.unflag-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
-    if (!confirm('Remove flag from this user?')) return;
+    if (!await Dialog.confirm('Remove the flag from this user and restore their access?', 'Remove Flag', 'Remove Flag')) return;
     try {
       const data = await apiFetch('api/users/flag_user.php', {
         body: JSON.stringify({ user_id: btn.dataset.id, action: 'unflag', csrf_token: getCSRFToken() })
@@ -75,7 +75,7 @@ document.querySelectorAll('.unflag-btn').forEach(btn => {
 
 document.querySelectorAll('.del-flag-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
-    if (!confirm('Permanently delete this user?')) return;
+    if (!await Dialog.danger('Permanently delete this user and all their data? This cannot be undone.', 'Delete User', 'Delete')) return;
     try {
       const data = await apiFetch('api/users/delete_user.php', {
         body: JSON.stringify({ user_id: btn.dataset.id, csrf_token: getCSRFToken() })

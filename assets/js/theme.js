@@ -28,7 +28,7 @@ const ThemeManager = (() => {
     // Update toggle button icon if it exists
     const toggleBtn = document.getElementById('theme-toggle');
     if (toggleBtn) {
-      toggleBtn.innerHTML = theme === 'dark' ? '&#9788;' : '&#9790;';
+      toggleBtn.innerHTML = theme === 'dark' ? '&#9728;' : '&#127769;';
       toggleBtn.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
     }
   }
