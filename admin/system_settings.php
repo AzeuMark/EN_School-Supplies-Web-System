@@ -25,128 +25,188 @@ try {
 include __DIR__ . '/../includes/layout_header.php';
 ?>
 
+<link rel="stylesheet" href="<?= $basePath ?>assets/css/pages/system_settings.css">
+
 <div class="page-header">
   <h1>System Settings</h1>
-  <p class="subtitle">Configure your store</p>
+  <p class="subtitle">Configure your store preferences, branding, and system behavior</p>
 </div>
 
-<div style="max-width:800px">
+<form id="settings-form">
 
-  <!-- Logo -->
-  <div class="card mb-4">
-    <div class="card-header">Store Logo</div>
-    <div class="card-body d-flex align-center gap-3">
-      <img id="logo-preview" src="<?= $basePath . ($s['logo_path'] ?: 'assets/images/logo.png') ?>" alt="Logo" style="width:64px;height:64px;border-radius:8px;object-fit:contain;background:var(--background)" onerror="this.style.display='none'">
-      <form id="logo-form" enctype="multipart/form-data">
-        <input type="file" name="logo" id="logo-input" accept="image/jpeg,image/png" style="display:none">
-        <label for="logo-input" class="btn btn-outline btn-sm" style="cursor:pointer">Upload New Logo</label>
-        <p class="text-muted" style="font-size:0.72rem;margin-top:0.3rem">PNG or JPG. Saved as assets/images/logo.png</p>
-      </form>
+  <!-- Card 1: Store Information -->
+  <div class="ss-card">
+    <div class="ss-card-body">
+      <div class="ss-heading">Store Information</div>
+
+      <div class="ss-grid-store">
+        <div class="ss-logo-row">
+          <div class="ss-logo-preview">
+            <img id="logo-preview" src="<?= $basePath . ($s['logo_path'] ?: 'assets/images/logo.png') ?>" alt="Logo" onerror="this.style.display='none'">
+          </div>
+          <div class="ss-logo-actions">
+            <input type="file" name="logo" id="logo-input" accept="image/jpeg,image/png" style="display:none">
+            <label for="logo-input" class="ss-upload-btn">&#128247; Upload Logo</label>
+            <span class="ss-upload-hint">PNG or JPG, max 1 MB</span>
+          </div>
+        </div>
+        <div class="ss-field">
+          <label class="ss-label" for="store_name">Store Name</label>
+          <input class="form-input" id="store_name" name="store_name" value="<?= htmlspecialchars($s['store_name']) ?>" placeholder="e.g. E&N School Supplies">
+        </div>
+        <div class="ss-field">
+          <label class="ss-label" for="store_phone">Store Phone</label>
+          <input class="form-input" id="store_phone" name="store_phone" value="<?= htmlspecialchars($s['store_phone']) ?>" placeholder="e.g. +63 912 345 6789">
+        </div>
+        <div class="ss-field">
+          <label class="ss-label" for="store_email">Store Email</label>
+          <input class="form-input" id="store_email" type="email" name="store_email" value="<?= htmlspecialchars($s['store_email']) ?>" placeholder="e.g. store@example.com">
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- General -->
-  <div class="card mb-4">
-    <div class="card-header">General</div>
-    <div class="card-body">
-      <form id="settings-form">
-        <div class="form-group"><label class="form-label">Store Name</label><input class="form-input" name="store_name" value="<?= htmlspecialchars($s['store_name']) ?>"></div>
-        <div class="settings-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-          <div class="form-group"><label class="form-label">Store Phone</label><input class="form-input" name="store_phone" value="<?= htmlspecialchars($s['store_phone']) ?>"></div>
-          <div class="form-group"><label class="form-label">Store Email</label><input class="form-input" type="email" name="store_email" value="<?= htmlspecialchars($s['store_email']) ?>"></div>
+  <!-- Card 2: System Configuration -->
+  <div class="ss-card">
+    <div class="ss-card-body">
+      <div class="ss-heading">System Configuration</div>
+
+      <div class="ss-grid-3">
+        <div class="ss-field">
+          <label class="ss-label" for="timezone">Timezone</label>
+          <select class="form-select" id="timezone" name="timezone">
+            <?php foreach (['Asia/Manila','Asia/Singapore','Asia/Tokyo','Asia/Shanghai','America/New_York','Europe/London','UTC'] as $tz): ?>
+              <option value="<?= $tz ?>" <?= $s['timezone'] === $tz ? 'selected' : '' ?>><?= $tz ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
-        <div class="settings-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-          <div class="form-group">
-            <label class="form-label">System Timezone</label>
-            <select class="form-select" name="timezone">
-              <?php foreach (['Asia/Manila','Asia/Singapore','Asia/Tokyo','Asia/Shanghai','America/New_York','Europe/London','UTC'] as $tz): ?>
-                <option value="<?= $tz ?>" <?= $s['timezone'] === $tz ? 'selected' : '' ?>><?= $tz ?></option>
+        <div class="ss-field">
+          <label class="ss-label" for="system_status">System Status</label>
+          <select class="form-select" id="system_status" name="system_status">
+            <option value="online" <?= $s['system_status']==='online'?'selected':'' ?>>&#128994; Online</option>
+            <option value="offline" <?= $s['system_status']==='offline'?'selected':'' ?>>&#128308; Offline</option>
+            <option value="maintenance" <?= $s['system_status']==='maintenance'?'selected':'' ?>>&#128992; Maintenance</option>
+          </select>
+        </div>
+        <div class="ss-field">
+          <label class="ss-label" for="auto_logout_hours">Staff Auto-Logout</label>
+          <div class="ss-inline">
+            <input class="form-input" type="number" id="auto_logout_hours" name="auto_logout_hours" value="<?= (int)$s['auto_logout_hours'] ?>" min="1" max="24">
+            <span class="ss-unit">hours</span>
+          </div>
+          <span class="ss-hint">Sessions exceeding this are flagged suspicious</span>
+        </div>
+      </div>
+
+      <hr class="ss-divider">
+
+      <div class="ss-toggle-row">
+        <div class="ss-toggle-text">
+          <span class="ss-toggle-name">Force Dark Mode</span>
+          <span class="ss-toggle-desc">Override all user preferences and force dark mode system-wide</span>
+        </div>
+        <span class="toggle-switch"><input type="checkbox" name="force_dark_mode" value="1" <?= $s['force_dark_mode']==='1'?'checked':'' ?>><span class="toggle-slider"></span></span>
+      </div>
+      <div class="ss-toggle-row">
+        <div class="ss-toggle-text">
+          <span class="ss-toggle-name">Disable No-Login Orders</span>
+          <span class="ss-toggle-desc">Prevent guest orders from the kiosk page</span>
+        </div>
+        <span class="toggle-switch"><input type="checkbox" name="disable_nologin_orders" value="1" <?= $s['disable_nologin_orders']==='1'?'checked':'' ?>><span class="toggle-slider"></span></span>
+      </div>
+      <div class="ss-toggle-row">
+        <div class="ss-toggle-text">
+          <span class="ss-toggle-name">Enable Online Payment</span>
+          <span class="ss-toggle-desc">Placeholder for future payment integration</span>
+        </div>
+        <span class="toggle-switch"><input type="checkbox" name="online_payment" value="1" <?= $s['online_payment']==='1'?'checked':'' ?>><span class="toggle-slider"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Inventory Defaults -->
+  <div class="ss-card">
+    <div class="ss-card-body">
+      <div class="ss-heading">Inventory Defaults</div>
+
+      <div class="ss-defaults-grid">
+        <div class="ss-defaults-col">
+          <div class="ss-col-title">Item Categories</div>
+          <div class="ss-tags-area">
+            <div id="cat-tags" class="ss-tag-cloud">
+              <?php foreach ($categories as $cat): ?>
+                <span class="tag"><?= htmlspecialchars($cat['category_name']) ?><button type="button" class="tag-remove" onclick="this.parentElement.remove()">&times;</button></span>
               <?php endforeach; ?>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">System Status</label>
-            <select class="form-select" name="system_status">
-              <option value="online" <?= $s['system_status']==='online'?'selected':'' ?>>Online</option>
-              <option value="offline" <?= $s['system_status']==='offline'?'selected':'' ?>>Offline</option>
-              <option value="maintenance" <?= $s['system_status']==='maintenance'?'selected':'' ?>>Maintenance</option>
-            </select>
+            </div>
+            <div class="ss-tag-input">
+              <input class="form-input" type="text" id="cat-input" placeholder="Add category...">
+              <button type="button" class="btn btn-outline btn-sm" id="cat-add-btn">Add</button>
+            </div>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Staff Auto-Logout Threshold (hours)</label>
-          <input class="form-input" type="number" name="auto_logout_hours" value="<?= (int)$s['auto_logout_hours'] ?>" min="1" max="24" style="max-width:120px">
+        <div class="ss-defaults-col">
+          <div class="ss-col-title">Item Names</div>
+          <div class="ss-tags-area">
+            <div id="name-tags" class="ss-tag-cloud">
+              <?php foreach ($defaultNames as $dn): ?>
+                <span class="tag"><?= htmlspecialchars($dn['item_name']) ?><button type="button" class="tag-remove" onclick="this.parentElement.remove()">&times;</button></span>
+              <?php endforeach; ?>
+            </div>
+            <div class="ss-tag-input">
+              <input class="form-input" type="text" id="name-input" placeholder="Add item name...">
+              <button type="button" class="btn btn-outline btn-sm" id="name-add-btn">Add</button>
+            </div>
+          </div>
         </div>
-
-        <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0">
-        <h4 class="mb-3">Toggles</h4>
-
-        <div style="display:flex;flex-direction:column;gap:0.75rem">
-          <label class="d-flex align-center gap-2" style="cursor:pointer">
-            <span class="toggle-switch"><input type="checkbox" name="force_dark_mode" value="1" <?= $s['force_dark_mode']==='1'?'checked':'' ?>><span class="toggle-slider"></span></span>
-            Force Dark Mode (overrides all users)
-          </label>
-          <label class="d-flex align-center gap-2" style="cursor:pointer">
-            <span class="toggle-switch"><input type="checkbox" name="disable_nologin_orders" value="1" <?= $s['disable_nologin_orders']==='1'?'checked':'' ?>><span class="toggle-slider"></span></span>
-            Disable No-Login Orders (kiosk)
-          </label>
-          <label class="d-flex align-center gap-2" style="cursor:pointer">
-            <span class="toggle-switch"><input type="checkbox" name="online_payment" value="1" <?= $s['online_payment']==='1'?'checked':'' ?>><span class="toggle-slider"></span></span>
-            Enable Online Payment (placeholder)
-          </label>
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-4">Save Settings</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Categories Tag Manager -->
-  <div class="card mb-4">
-    <div class="card-header">Default Item Categories</div>
-    <div class="card-body">
-      <div id="cat-tags" class="d-flex flex-wrap gap-2 mb-3">
-        <?php foreach ($categories as $cat): ?>
-          <span class="tag"><?= htmlspecialchars($cat['category_name']) ?><button class="tag-remove" onclick="this.parentElement.remove()">&times;</button></span>
-        <?php endforeach; ?>
-      </div>
-      <div class="d-flex gap-2">
-        <input class="form-input" type="text" id="cat-input" placeholder="Add category..." style="max-width:250px">
-        <button class="btn btn-outline btn-sm" id="cat-add-btn">Add</button>
       </div>
     </div>
   </div>
 
-  <!-- Default Names Tag Manager -->
-  <div class="card mb-4">
-    <div class="card-header">Default Item Names</div>
-    <div class="card-body">
-      <div id="name-tags" class="d-flex flex-wrap gap-2 mb-3">
-        <?php foreach ($defaultNames as $dn): ?>
-          <span class="tag"><?= htmlspecialchars($dn['item_name']) ?><button class="tag-remove" onclick="this.parentElement.remove()">&times;</button></span>
-        <?php endforeach; ?>
-      </div>
-      <div class="d-flex gap-2">
-        <input class="form-input" type="text" id="name-input" placeholder="Add item name..." style="max-width:250px">
-        <button class="btn btn-outline btn-sm" id="name-add-btn">Add</button>
-      </div>
-    </div>
+  <!-- Save Bar -->
+  <div class="ss-save-bar">
+    <span class="ss-save-hint">Changes take effect immediately after saving</span>
+    <button type="submit" class="btn btn-primary">Save Settings</button>
   </div>
 
-</div>
-
-<style>
-  @media (max-width: 600px) {
-    .settings-grid-2 { grid-template-columns: 1fr !important; }
-    div[style*="max-width:800px"] { padding: 0; }
-    .card-body .d-flex.align-center.gap-3 { flex-wrap: wrap; }
-    #cat-input, #name-input { max-width: 100% !important; flex: 1; }
-    .d-flex.gap-2:has(#cat-input), .d-flex.gap-2:has(#name-input) { flex-wrap: wrap; }
-  }
-</style>
+</form>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  const saveBar = document.querySelector('.ss-save-bar');
+  const form = document.getElementById('settings-form');
+
+  // Snapshot initial state
+  function getFormSnapshot() {
+    const data = {};
+    form.querySelectorAll('input[type="text"], input[type="email"], input[type="number"], select').forEach(el => {
+      if (el.name) data[el.name] = el.value;
+    });
+    form.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      if (el.name) data[el.name] = el.checked ? '1' : '0';
+    });
+    data._catTags = Array.from(document.querySelectorAll('#cat-tags .tag')).map(t => t.firstChild.textContent.trim()).join(',');
+    data._nameTags = Array.from(document.querySelectorAll('#name-tags .tag')).map(t => t.firstChild.textContent.trim()).join(',');
+    return JSON.stringify(data);
+  }
+
+  const initialSnapshot = getFormSnapshot();
+
+  function checkChanges() {
+    const changed = getFormSnapshot() !== initialSnapshot;
+    saveBar.classList.toggle('visible', changed);
+  }
+
+  // Listen to form field changes
+  form.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('input', checkChanges);
+    el.addEventListener('change', checkChanges);
+  });
+
+  // Observe tag additions/removals
+  const tagObserver = new MutationObserver(checkChanges);
+  tagObserver.observe(document.getElementById('cat-tags'), { childList: true });
+  tagObserver.observe(document.getElementById('name-tags'), { childList: true });
+
   // Logo upload
   document.getElementById('logo-input').addEventListener('change', async function() {
     if (!this.files[0]) return;
@@ -167,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById(containerId);
     const tag = document.createElement('span');
     tag.className = 'tag';
-    tag.innerHTML = `${escapeHtml(val)}<button class="tag-remove" onclick="this.parentElement.remove()">&times;</button>`;
+    tag.innerHTML = `${escapeHtml(val)}<button type="button" class="tag-remove" onclick="this.parentElement.remove()">&times;</button>`;
     container.appendChild(tag);
     input.value = '';
   }

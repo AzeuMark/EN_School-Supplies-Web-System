@@ -1,0 +1,285 @@
+/* ============================================================
+   System Settings — Page-Specific Styles
+   Clean 3-card layout, consistent with dashboard pages
+   ============================================================ */
+
+/* ── Card ── */
+.ss-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+}
+.ss-card-body {
+  padding: 1.25rem;
+}
+
+/* ── Sub-section heading inside a card ── */
+.ss-heading {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Section divider inside a card ── */
+.ss-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.25rem 0;
+}
+
+/* ── Form Grids ── */
+.ss-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.ss-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+.ss-grid-4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+}
+.ss-grid-store {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr 1fr;
+  gap: 1rem;
+  align-items: end;
+}
+
+/* ── Form Field ── */
+.ss-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.ss-field .ss-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.ss-field .ss-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ── Logo Row ── */
+.ss-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+.ss-logo-preview {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.ss-logo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 2px;
+}
+.ss-logo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.ss-logo-actions .ss-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--background);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  width: fit-content;
+  white-space: nowrap;
+}
+.ss-logo-actions .ss-upload-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.ss-logo-actions .ss-upload-hint {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ── Toggle Row ── */
+.ss-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+}
+.ss-toggle-row + .ss-toggle-row {
+  border-top: 1px solid var(--border);
+}
+.ss-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  flex: 1;
+  min-width: 0;
+}
+.ss-toggle-text .ss-toggle-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.ss-toggle-text .ss-toggle-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* ── Inline Number Field ── */
+.ss-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.ss-inline .form-input {
+  width: 72px;
+  text-align: center;
+}
+.ss-inline .ss-unit {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ── Tag Manager ── */
+.ss-tags-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.ss-tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  min-height: 28px;
+}
+.ss-tag-cloud:empty::before {
+  content: 'None yet';
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+.ss-tag-cloud .tag {
+  animation: ssTagIn 0.15s ease;
+}
+@keyframes ssTagIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.ss-tag-input {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+.ss-tag-input .form-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Inventory Defaults 2-col ── */
+.ss-defaults-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.ss-defaults-col .ss-col-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+}
+
+/* ── Save Bar (floating, hidden until changes) ── */
+.ss-save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  position: sticky;
+  bottom: 1rem;
+  z-index: 50;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(calc(100% + 2rem));
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.ss-save-bar.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.ss-save-bar .ss-save-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-right: auto;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .ss-grid-2,
+  .ss-defaults-grid { grid-template-columns: 1fr; }
+  .ss-grid-3 { grid-template-columns: 1fr 1fr; }
+  .ss-grid-4 { grid-template-columns: 1fr 1fr; }
+  .ss-grid-store { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .ss-grid-3,
+  .ss-grid-4,
+  .ss-grid-store { grid-template-columns: 1fr; }
+  .ss-logo-row { flex-direction: column; align-items: flex-start; }
+  .ss-toggle-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .ss-save-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+    bottom: 0.5rem;
+  }
+  .ss-save-bar .ss-save-hint {
+    margin-right: 0;
+    text-align: center;
+  }
+  .ss-save-bar .btn { width: 100%; }
+}
