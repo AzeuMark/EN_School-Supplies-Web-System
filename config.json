@@ -1,0 +1,25 @@
+{
+  "database": {
+    "host": "localhost",
+    "name": "azeu_en_school_supplies",
+    "user": "root",
+    "password": "",
+    "charset": "utf8mb4"
+  },
+  "aes": {
+    "key": "CHANGE_THIS_KEY_BEFORE_DEPLOY",
+    "iv": "CHANGE_THIS_IV_16"
+  },
+  "admin": {
+    "default_username": "admin@en.com",
+    "default_password": "admin123"
+  },
+  "system": {
+    "store_name": "E&N School Supplies",
+    "store_phone": "",
+    "store_email": "",
+    "logo_path": "assets/images/logo.png",
+    "timezone": "Asia/Manila",
+    "auto_logout_hours": 8
+  }
+}

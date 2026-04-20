@@ -1,0 +1,35 @@
+# E&N School Supplies — Apache Configuration
+
+# Error documents
+ErrorDocument 404 /en-school-supplies/404.php
+ErrorDocument 403 /en-school-supplies/403.php
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "(config\.json|\.gitkeep|\.md)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Protect includes directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to includes
+    RewriteRule ^includes/ - [F,L]
+
+    # Block direct access to logs
+    RewriteRule ^logs/ - [F,L]
+
+    # Block direct access to cron
+    RewriteRule ^cron/ - [F,L]
+</IfModule>
+
+# PHP settings
+<IfModule mod_php.c>
+    php_value upload_max_filesize 2M
+    php_value post_max_size 2M
+    php_value max_execution_time 30
+</IfModule>
